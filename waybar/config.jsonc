@@ -1,0 +1,62 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 24,
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["hyprland/window"],
+  "modules-right": ["pulseaudio", "network", "battery", "clock"],
+
+  "hyprland/workspaces": {
+    "format": "{name}",
+    "on-click": "activate",
+    "on-scroll-up": "hyprctl dispatch workspace e+1",
+    "on-scroll-down": "hyprctl dispatch workspace e-1"
+  },
+
+  "hyprland/window": {
+    "format": "{}",
+    "icon": true,
+    "icon-size": 20,
+    "rewrite": {
+      "(.*) - Mozilla Firefox": "🌎 $1",
+      "(.*) - zsh": "> [$1]"
+    }
+  },
+
+  "network": {
+    "format-wifi": "<span size='13000'>  </span>{essid}",
+    "format-disconnected": "<span size='13000' foreground='#f5e0dc'> </span>Disconnected",
+    "tooltip-format-wifi": "Signal Strength: {signalStrength}%",
+    "on-click": "nm-connection-editor"
+  },
+
+  "battery": {
+    "bat": "BAT0",
+    "states": { "warning": 30, "critical": 15 },
+    "format": "<span size='13000'>{icon} </span>{capacity}%",
+    "format-warning": "<span size='13000' foreground='#B1E3AD'>{icon} </span>{capacity}%",
+    "format-critical": "<span size='13000' foreground='#E38C8F'>{icon} </span>{capacity}%",
+    "format-charging": "<span size='13000' foreground='#B1E3AD'> </span>{capacity}%",
+    "format-full": "<span size='13000' foreground='#B1E3AD'> </span>{capacity}%",
+    "format-alt": "<span size='13000' foreground='#B1E3AD'>{icon} </span>{time}",
+    "format-icons": ["","","","",""],
+    "tooltip-format": "{time}"
+  },
+
+  "pulseaudio": {
+    "format": "{icon}   {volume}%",
+    "format-bluetooth": "{icon}  {volume}% ",
+    "format-muted": "",
+    "format-icons": {
+      "headphones": "", "handsfree": "", "headset": "",
+      "phone": "", "car": "", "default": ["","",""]
+    },
+    "on-click": "pavucontrol"
+  },
+
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%H:%M}",
+    "tooltip-format": "<big>{:%A, %d %B %Y}</big>\n<tt><small>{calendar}</small></tt>"
+  },
+}

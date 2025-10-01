@@ -1,0 +1,4 @@
+libreoffice/**/backup/*
+*.bak
+*.tmp
+*.swp

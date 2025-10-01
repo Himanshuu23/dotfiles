@@ -1,0 +1,57 @@
+* {
+  border: none;
+  border-radius: 0;
+  font-family: "Ubuntu Nerd Font";
+  font-size: 13px;
+  min-height: 0;
+}
+
+window#waybar {
+  background: transparent;
+  color: white;
+}
+
+#window {
+  font-weight: bold;
+  font-family: "Ubuntu";
+}
+
+#workspaces button {
+  padding: 8px 12px;
+  margin-left: 4px;
+  background: transparent;
+  color: white;
+  font-weight: bold;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.35;
+}
+
+#workspaces button.active {
+    opacity: 1;
+}
+
+#clock, #battery, #network, #pulseaudio, #custom-spotify {
+  padding: 0 8px;
+  margin: 0 3px;
+  font-family: "Ubuntu Nerd Font";
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+
+#battery.warning:not(.charging) {
+  animation: blink 0.5s linear infinite alternate;
+}
+
+@keyframes blink {
+  to {
+    background-color: #ffffff;
+    color: black;
+  }
+}
+
+#network.disconnected {
+  background: #f53c3c;
+}

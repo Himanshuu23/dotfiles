@@ -1,0 +1,8 @@
+font-family = "JetBrainsMono Nerd Font"
+font-size = 15
+
+background = #000000
+background-opacity = 0.75
+
+gtk-titlebar = true
+window-decoration = false

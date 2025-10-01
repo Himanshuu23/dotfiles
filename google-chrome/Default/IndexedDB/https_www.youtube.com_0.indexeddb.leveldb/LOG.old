@@ -1,0 +1,9 @@
+2025/03/14-20:40:10.505 b80 Reusing MANIFEST /home/herking/.config/google-chrome/Default/IndexedDB/https_www.youtube.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/14-20:40:10.505 b80 Recovering log #11
+2025/03/14-20:40:10.506 b80 Reusing old log /home/herking/.config/google-chrome/Default/IndexedDB/https_www.youtube.com_0.indexeddb.leveldb/000011.log 
+2025/03/14-20:40:11.780 b81 Compacting 1@1 + 1@2 files
+2025/03/14-20:40:11.792 b81 Generated table #14@1: 352 keys, 41841 bytes
+2025/03/14-20:40:11.792 b81 Compacted 1@1 + 1@2 files => 41841 bytes
+2025/03/14-20:40:11.798 b81 compacted to: files[ 0 0 1 0 0 0 0 ]
+2025/03/14-20:40:11.799 b81 Delete type=2 #9
+2025/03/14-20:40:11.799 b81 Delete type=2 #12

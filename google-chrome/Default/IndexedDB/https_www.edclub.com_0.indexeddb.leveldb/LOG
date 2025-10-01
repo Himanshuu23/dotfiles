@@ -1,0 +1,7 @@
+2025/03/09-18:02:12.749 3bc Reusing MANIFEST /home/herking/.config/google-chrome/Default/IndexedDB/https_www.edclub.com_0.indexeddb.leveldb/MANIFEST-000001
+2025/03/09-18:02:12.749 3bc Recovering log #3
+2025/03/09-18:02:12.749 3bc Reusing old log /home/herking/.config/google-chrome/Default/IndexedDB/https_www.edclub.com_0.indexeddb.leveldb/000003.log 
+2025/03/09-18:02:18.007 3bd Level-0 table #5: started
+2025/03/09-18:02:18.013 3bd Level-0 table #5: 379 bytes OK
+2025/03/09-18:02:18.020 3bd Delete type=0 #3
+2025/03/09-18:02:18.021 3bd Manual compaction at level-0 from (begin) .. (end); will stop at (end)

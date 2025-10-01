@@ -1,0 +1,12 @@
+[manager]
+flavor = "catppuccin-mocha"
+
+[open]
+rules = [
+  { mime = "application/pdf", use = "zathura" }
+]
+
+[opener]
+zathura = [
+  { run = "zathura \"$1\"", block = true, for = "unix" }
+]

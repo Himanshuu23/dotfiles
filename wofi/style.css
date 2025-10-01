@@ -1,0 +1,61 @@
+@define-color text #ffffff;
+@define-color accent #ffffff;
+
+* {
+  font-family: 'JetBrainsMono Nerd Font', monospace;
+  font-size: 15px;
+}
+
+/* Window */
+window {
+  margin: 0px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Input */
+#input {
+  margin: 0 0 20px 0;
+  padding: 10px 14px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: @text;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#input image {
+  border: none;
+  color: @accent;
+}
+
+#input * {
+  outline: none;
+}
+
+#input:focus {
+  border: 1px solid rgba(200, 200, 200, 0.5);
+  box-shadow: 0 0 0 2px rgba(200, 200, 200, 0.2);
+}
+
+/* Entry */
+#entry {
+  background-color: transparent;
+  color: @text;
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+#entry:selected {
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+#entry:selected #text {
+  color: @text;
+}
+
+#text {
+  color: @text;
+}
