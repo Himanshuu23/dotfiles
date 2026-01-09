@@ -1,0 +1,326 @@
+config.jsonc
+{
+  "layer": "top",
+  "position": "top",
+  "height": 24,
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["hyprland/window"],
+  "modules-right": ["custom/spotify", "pulseaudio", "network", "battery", "clock"],
+  "hyprland/workspaces": {
+    "format": "{name}",
+    "on-click": "activate",
+    "on-scroll-up": "hyprctl dispatch workspace e+1",
+    "on-scroll-down": "hyprctl dispatch workspace e-1"
+  },
+  "hyprland/window": {
+    "format": "{}",
+    "icon": true,
+    "icon-size": 20,
+    "rewrite": {
+      "(.*) - Mozilla Firefox": "🌎 $1",
+      "(.*) - zsh": "> [$1]"
+    }
+  },
+  "network": {
+    "format-wifi": "<span size='13000'>  </span>{essid}",
+    "format-disconnected": "<span size='13000' foreground='
+#f5e0dc'> </span>Disconnected",
+    "tooltip-format-wifi": "Signal Strength: {signalStrength}%",
+    "on-click": "nm-connection-editor"
+  },
+  "battery": {
+    "bat": "BAT0",
+    "states": { "warning": 30, "critical": 15 },
+    "format": "<span size='13000'>{icon} </span>{capacity}%",
+    "format-warning": "<span size='13000' foreground='
+#B1E3AD'>{icon} </span>{capacity}%",
+    "format-critical": "<span size='13000' foreground='
+#E38C8F'>{icon} </span>{capacity}%",
+    "format-charging": "<span size='13000' foreground='
+#B1E3AD'> </span>{capacity}%",
+    "format-full": "<span size='13000' foreground='
+#B1E3AD'> </span>{capacity}%",
+    "format-alt": "<span size='13000' foreground='
+#B1E3AD'>{icon} </span>{time}",
+    "format-icons": ["","","","",""],
+    "tooltip-format": "{time}"
+  },
+  "pulseaudio": {
+    "format": "{icon}   {volume}%",
+    "format-bluetooth": "{icon}  {volume}% ",
+    "format-muted": "",
+    "format-icons": {
+      "headphones": "", "handsfree": "", "headset": "",
+      "phone": "", "car": "", "default": ["","",""]
+    },
+    "on-click": "pavucontrol"
+  },
+  "custom/spotify": {
+    "exec": "status=$(playerctl --player=spotify status 2>/dev/null); if [ \"$status\" = \"Playing\" ]; then echo '{\"text\": \"<span foreground=\\\"
+#1DB954\\\"></span>\"}'; elif [ \"$status\" = \"Paused\" ]; then echo '{\"text\": \"<span foreground=\\\"
+#000000\\\"></span>\", \"class\": \"paused\"}'; else echo '{\"text\": \"\"}'; fi",
+    "return-type": "json",
+    "interval": 2,
+    "on-click": "bash -c 'pkill -f spotify_modal || ~/.config/waybar/scripts/spotify_modal.sh &'"
+  },
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%H:%M}",
+    "tooltip-format": "<big>{:%A, %d %B %Y}</big>\n<tt>{calendar}</tt>"
+  }
+}
+spotify_modal.sh
+#!/bin/bash
+info=$(playerctl metadata --format '{{status}}|{{artist}}|{{title}}|{{mpris:artUrl}}')
+status=$(echo "$info" | cut -d'|' -f1)
+artist=$(echo "$info" | cut -d'|' -f2)
+title=$(echo "$info" | cut -d'|' -f3)
+art=$(echo "$info" | cut -d'|' -f4)
+cat <<EOF | yad --image="$art" --title="Spotify" --button="⏮:playerctl previous" \
+ --button="⏯:playerctl play-pause" --button="⏭:playerctl next" \
+ --form --field="Now Playing:":LBL --field="Artist:":LBL --field="Status:":LBL \
+ --width=300 --height=350 --borders=10 --center --undecorated --skip-taskbar --on-top
+$title
+$artist
+$status
+EOF
+
+style.css
+* {
+  border: none;
+  border-radius: 0;
+  font-family: "Ubuntu Nerd Font";
+  font-size: 13px;
+  min-height: 0;
+}
+window#waybar {
+  background: transparent;
+  color: white;
+}
+#window {
+  font-weight: bold;
+  font-family: "Ubuntu";
+}
+#workspaces button {
+  padding: 8px 12px;
+  margin-left: 4px;
+  background: transparent;
+  color: white;
+  font-weight: bold;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  opacity: 0.35;
+}
+#workspaces button.active {
+    opacity: 1;
+}
+#clock, #battery, #network, #pulseaudio, #custom-spotify {
+  padding: 0 8px;
+  margin: 0 3px;
+  font-family: "Ubuntu Nerd Font";
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+#battery.warning:not(.charging) {
+  animation: blink 0.5s linear infinite alternate;
+}
+@keyframes blink {
+  to {
+    background-color: 
+#ffffff;
+    color: black;
+  }
+}
+#network.disconnected {
+  background: 
+#f53c3c;
+}
+/* #custom-spotify { */
+/*   animation: spin 2s linear infinite; */
+/* } */
+/**/
+/* @keyframes spin { */
+/*   from { */
+/*     transform: rotate(0deg); */
+/*   } */
+/*   to { */
+/*     transform: rotate(360deg); */
+/*   } */
+/* } */
+
+
+1. spotify_status.sh
+bash#!/bin/bash
+
+# Check if Spotify is running at all
+if ! pgrep -x spotify > /dev/null 2>&1; then
+    echo '{"text": "", "class": "hidden"}'
+    exit 0
+fi
+
+# Get player status
+status=$(playerctl --player=spotify status 2>/dev/null)
+
+# If no status (Spotify open but no song loaded)
+if [ -z "$status" ] || [ "$status" = "Stopped" ]; then
+    echo '{"text": "<span size=\"13000\" foreground=\"#1DB954\"></span>", "tooltip": "Spotify", "class": "idle"}'
+    exit 0
+fi
+
+# Get song info for tooltip
+artist=$(playerctl --player=spotify metadata artist 2>/dev/null | head -c 50)
+title=$(playerctl --player=spotify metadata title 2>/dev/null | head -c 50)
+
+# If playing, show rotating disk
+if [ "$status" = "Playing" ]; then
+    echo "{\"text\": \"<span size='15000' foreground='#1DB954'>󰝚</span>\", \"tooltip\": \"$title - $artist\", \"class\": \"playing\"}"
+# If paused, show static disk
+elif [ "$status" = "Paused" ]; then
+    echo "{\"text\": \"<span size='15000' foreground='#888888'>󰝚</span>\", \"tooltip\": \"$title - $artist (Paused)\", \"class\": \"idle\"}"
+else
+    # Fallback: show normal Spotify icon
+    echo '{"text": "<span size=\"13000\" foreground=\"#1DB954\"></span>", "tooltip": "Spotify", "class": "idle"}'
+fi
+
+2. spotify_tooltip.sh
+bash#!/bin/bash
+
+# Get current song info
+status=$(playerctl --player=spotify status 2>/dev/null)
+artist=$(playerctl --player=spotify metadata artist 2>/dev/null)
+title=$(playerctl --player=spotify metadata title 2>/dev/null)
+album=$(playerctl --player=spotify metadata album 2>/dev/null)
+art_url=$(playerctl --player=spotify metadata mpris:artUrl 2>/dev/null)
+
+# Download album art
+art_file="/tmp/spotify_tooltip_art.jpg"
+if [ -n "$art_url" ]; then
+    curl -s "$art_url" -o "$art_file" 2>/dev/null
+fi
+
+# Status icon
+if [ "$status" = "Playing" ]; then
+    status_icon="▶"
+else
+    status_icon="⏸"
+fi
+
+# Create tooltip using yad
+yad --image="$art_file" \
+    --title="Spotify" \
+    --text="<big><b>$title</b></big>\n<i>$artist</i>\n<small>$album</small>\n\n<b>$status_icon $status</b>" \
+    --button="⏮:1" \
+    --button="⏯:2" \
+    --button="⏭:3" \
+    --width=350 \
+    --height=180 \
+    --borders=20 \
+    --center \
+    --undecorated \
+    --skip-taskbar \
+    --on-top \
+    --timeout=10 \
+    --timeout-indicator=bottom
+
+BUTTON=$?
+
+case $BUTTON in
+    1) playerctl --player=spotify previous ;;
+    2) playerctl --player=spotify play-pause ;;
+    3) playerctl --player=spotify next ;;
+esac
+
+3. dock_apps.sh
+bash#!/bin/bash
+
+# Function to get icon path from .desktop file
+get_icon_path() {
+    local app_name=$1
+    local desktop_file=""
+    
+    # Search for .desktop file
+    for dir in /usr/share/applications ~/.local/share/applications /var/lib/flatpak/exports/share/applications; do
+        if [ -d "$dir" ]; then
+            desktop_file=$(find "$dir" -iname "*${app_name}*.desktop" 2>/dev/null | head -n 1)
+            [ -n "$desktop_file" ] && break
+        fi
+    done
+    
+    if [ -z "$desktop_file" ]; then
+        echo ""
+        return
+    fi
+    
+    # Extract icon name
+    icon_name=$(grep -m 1 "^Icon=" "$desktop_file" | cut -d'=' -f2)
+    
+    # If icon is full path, return it
+    if [ -f "$icon_name" ]; then
+        echo "$icon_name"
+        return
+    fi
+    
+    # Search for icon in icon themes
+    for size in scalable 48x48 64x64 128x128 256x256; do
+        for theme_dir in /usr/share/icons/hicolor /usr/share/icons/Papirus /usr/share/pixmaps ~/.local/share/icons; do
+            if [ -d "$theme_dir" ]; then
+                icon_file=$(find "$theme_dir" -name "${icon_name}.*" -path "*/${size}/*" 2>/dev/null | head -n 1)
+                if [ -n "$icon_file" ]; then
+                    echo "$icon_file"
+                    return
+                fi
+            fi
+        done
+    done
+    
+    # Last resort: check pixmaps
+    if [ -f "/usr/share/pixmaps/${icon_name}.png" ]; then
+        echo "/usr/share/pixmaps/${icon_name}.png"
+    elif [ -f "/usr/share/pixmaps/${icon_name}.svg" ]; then
+        echo "/usr/share/pixmaps/${icon_name}.svg"
+    else
+        echo ""
+    fi
+}
+
+# Check if app is running
+is_running() {
+    pgrep -i "$1" > /dev/null 2>&1
+}
+
+# Define dock apps (process_name:search_name:fallback_icon:command)
+apps=(
+    "ghostty:ghostty::ghostty"
+    "zen:zen-browser:󰈹:zen-browser"
+    "systemsettings:systemsettings::systemsettings5"
+    "spotify:spotify::spotify"
+)
+
+# Build dock HTML
+output=""
+
+for app in "${apps[@]}"; do
+    IFS=':' read -r process search_name fallback_icon command <<< "$app"
+    
+    # Get icon
+    icon_path=$(get_icon_path "$search_name")
+    
+    # Build icon HTML
+    if [ -n "$icon_path" ] && [ -f "$icon_path" ]; then
+        icon_html="<img src='file://$icon_path'/>"
+    elif [ -n "$fallback_icon" ]; then
+        icon_html="<span>$fallback_icon</span>"
+    else
+        icon_html="<span></span>"
+    fi
+    
+    # Check running status
+    if is_running "$process"; then
+        output+="<span class='dock-item running' onclick='hyprctl dispatch focuswindow $process'>$icon_html</span>"
+    else
+        output+="<span class='dock-item' onclick='$command &'>$icon_html</span>"
+    fi
+done
+echo "{\"text\": \"$output\", \"tooltip\": \"Application Dock\", \"class\": \"dock\"}"
